@@ -301,6 +301,55 @@
     .user-info{display:none;} main{padding:14px;} .hero{padding:24px;} .offer-header{padding-right:0;padding-top:34px;}
   }
   @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+
+  /* Ajustes: estados debajo del contenido y logos sin marcos blancos añadidos */
+  .offer-header.no-badge{padding-right:0;}
+  .offer-status-below{
+    position:static !important;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    width:max-content;
+    max-width:100%;
+    margin:12px 0 0;
+    background:var(--teal);
+    color:#04122e;
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+    line-height:1.35;
+  }
+  .offer-status-below.blocked{background:#F59A4B;color:#1a0a00;}
+  .about-logo{
+    display:block;
+    width:180px;
+    max-width:100%;
+    height:auto;
+    object-fit:contain;
+    margin-top:12px;
+    background:transparent !important;
+    border:0 !important;
+    border-radius:0 !important;
+    padding:0 !important;
+    box-shadow:none !important;
+  }
+  footer img{
+    height:48px;
+    width:auto;
+    max-width:180px;
+    object-fit:contain;
+    background:transparent !important;
+    border:0 !important;
+    border-radius:0 !important;
+    padding:0 !important;
+    box-shadow:none !important;
+  }
+  .brand img,.hero img,.auth-logo{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
   /* Tags / intereses */
   .chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--bg-field);color:var(--ink);border-radius:999px;padding:7px 14px;font:500 13px 'Inter',sans-serif;cursor:pointer;transition:.12s}
   .chip:hover{border-color:var(--teal)}
@@ -1307,17 +1356,17 @@ function renderDashboardTutor(){
                 if(!offer || !student) return ''
                 return `
                   <div class="offer-card" style="cursor:default;">
-                    <div class="offer-header">
+                    <div class="offer-header no-badge">
                       <div>
                         <div class="offer-title">${esc(offer.title)}</div>
                         <div style="font-size:12px;color:var(--ink-soft);margin-top:4px;">👤 ${esc(student.full_name)} • 📌 ${esc(offer.company_name)}</div>
                       </div>
-                      <div class="offer-badge ${a.status === 'rejected' ? 'blocked' : ''}">${STATUS_LABELS[a.status] || esc(a.status)}</div>
                     </div>
                     <div class="offer-details">
                       <div class="offer-detail-item"><strong>Horario:</strong> ${esc(offer.start_time)} - ${esc(offer.end_time)}</div>
                       <div class="offer-detail-item"><strong>Paga:</strong> $${esc(offer.pay)}/h</div>
                     </div>
+                    <div class="offer-status-below ${a.status === 'rejected' ? 'blocked' : ''}">${STATUS_LABELS[a.status] || esc(a.status)}</div>
                     ${a.status === 'pending' ? `
                       <div style="display:flex;gap:8px;margin-top:8px;">
                         <button class="btn btn-sm btn-secondary" onclick="approveAssignment(${a.id})">Aprobar</button>
@@ -1362,13 +1411,13 @@ function renderDashboardTeen(){
         const o = offerById(a.offer_id)
         if(!o) return ''
         return `<div class="offer-card" style="cursor:default;">
-          <div class="offer-header">
+          <div class="offer-header no-badge">
             <div>
               <div class="offer-title">${esc(o.title)}</div>
               <div style="font-size:12px;color:var(--ink-soft);margin-top:4px;">📌 ${esc(o.company_name)} • ${esc(o.start_time)} - ${esc(o.end_time)}</div>
             </div>
-            <div class="offer-badge ${a.status === 'rejected' ? 'blocked' : ''}">${STATUS_LABELS[a.status] || esc(a.status)}</div>
           </div>
+          <div class="offer-status-below ${a.status === 'rejected' ? 'blocked' : ''}">${STATUS_LABELS[a.status] || esc(a.status)}</div>
         </div>`
       }).join('')
 
@@ -1428,7 +1477,7 @@ function renderDashboardTeen(){
                   const blocked = !existing && !compat.ok
                   let action = ''
                   if(existing){
-                    action = `<div class="offer-badge ${existing.status === 'rejected' ? 'blocked' : ''}" style="margin-top:12px;">${STATUS_LABELS[existing.status] || esc(existing.status)}</div>`
+                    action = `<div class="offer-status-below ${existing.status === 'rejected' ? 'blocked' : ''}">${STATUS_LABELS[existing.status] || esc(existing.status)}</div>`
                   } else if(blocked){
                     action = `<div class="warning-box show" style="margin-top:12px;">⚠️ ${esc(compat.reason)}</div>`
                   } else {
@@ -1436,12 +1485,12 @@ function renderDashboardTeen(){
                   }
                   return `
                     <div class="offer-card ${blocked ? 'blocked' : ''}" style="cursor:default;">
-                      <div class="offer-header">
+                      <div class="offer-header ${existing ? 'no-badge' : ''}">
                         <div>
                           <div class="offer-title">${esc(o.title)}</div>
                           <div class="co-line" style="font-size:13px;color:var(--ink-soft);margin-top:4px;">${esc(o.company_name)} ${emp && emp.verified ? '<span style="color:var(--teal);display:inline-flex;gap:4px;align-items:center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>verificada</span>' : '<span style="color:var(--raspberry-dark);display:inline-flex;gap:4px;align-items:center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Empresa no verificada</span>'}</div>
                         </div>
-                        <div class="offer-badge ${blocked ? 'blocked' : ''}">${blocked ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg> Conflicto` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg> Compatible`}</div>
+                        ${existing ? '' : `<div class="offer-badge ${blocked ? 'blocked' : ''}">${blocked ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg> Conflicto` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg> Compatible`}</div>`}
                       </div>
                       <div class="offer-details">
                         <div class="offer-detail-item"><strong>Tipo:</strong> ${esc(CATEGORY_LABELS[o.category] || o.category)}</div>
@@ -2009,7 +2058,7 @@ function renderHome(isPublic = false){
     <h2>Quiénes somos</h2>
     <p>Tutela Tech es una empresa dedicada a la innovación tecnológica y a la investigación. Estudiamos cómo se vincula la gente joven con el trabajo y desarrollamos herramientas que reducen riesgos y abren oportunidades.</p>
     <p>“Tutela” es protección: el logo une dos letras T bajo un mismo techo, una azul y otra naranja. ATR es nuestro primer producto, creado por Tomás, Santino, Simón y Joaquín (6.º año, 2026).</p>
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;"><img src="assets/logo-tutela.png" alt="Tutela Tech" style="height:96px;background:#fff;border-radius:12px;padding:6px;"></div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;"><img class="about-logo" src="assets/logo-tutela.png" alt="Tutela Tech"></div>
   </section>
 
   <section class="card home-sec" id="manual">
